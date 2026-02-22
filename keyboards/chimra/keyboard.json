@@ -13,7 +13,10 @@
         "extrakey": true,
         "mousekey": true,
         "nkro": true,
-        "split": true
+        "split": true,
+        "combo": false,
+        "tap_dance": false,
+        "key_override": false
     },
     "split": {
         "enabled": true,
