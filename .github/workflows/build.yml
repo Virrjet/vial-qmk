@@ -1,0 +1,46 @@
+name: Build Firmware
+
+on:
+  push:
+    paths:
+      - 'keyboards/chimra/**'
+  pull_request:
+    paths:
+      - 'keyboards/chimra/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout QMK
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache QMK environment
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/qmk
+            ~/.local/share/qmk
+          key: ${{ runner.os }}-qmk-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-qmk-
+
+      - name: Install QMK Env
+        run: |
+          python3 -m pip install qmk
+          qmk setup -y
+
+      - name: Build Firmware
+        run: qmk compile -kb chimra -km vial
+
+      - name: Archive firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: chimra_vial
+          path: |
+            *.uf2
+            *.hex
+            *.bin
